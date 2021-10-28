@@ -12,9 +12,9 @@ const connectDatabase = () => {
     .then((data) => {
       log(`MongoDB connected with server: ${data.connection.host}`);
     })
-    .catch((err) => {
-      log(err);
-    });
+    // .catch((err) => {
+    //   log(err);
+    // });
 };
 
 module.exports = connectDatabase;
