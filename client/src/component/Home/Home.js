@@ -1,46 +1,55 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { CgMouse } from "react-icons/all";
+import { useSelector, useDispatch } from "react-redux";
+import { useAlert } from "react-alert";
 import "./Home.css";
 import Product from "./Product";
-
-const product = {
-  name: "Trident of Poseidon",
-  images: [
-    {
-      url: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Poseidon_Penteskouphia_Louvre_CA452.jpg/938px-Poseidon_Penteskouphia_Louvre_CA452.jpg",
-    },
-  ],
-  price: "20 CC",
-  _id: "xuni",
-};
+import MetaData from "../layout/MetaData";
+import { getProduct } from "../../actions/productAction";
+import Loader from "../layout/Loader/Loader";
 
 const Home = () => {
+  const alert = useAlert();
+  const dispatch = useDispatch();
+
+  const { loading, error, products, productsCount } = useSelector(
+    (state) => state.products
+  );
+
+  useEffect(() => {
+    if (error) {
+      return alert.error(error);
+    }
+    dispatch(getProduct());
+  }, [dispatch, error, alert]);
+
   return (
     <Fragment>
-      <div className="banner">
-        <p>Welcome to Kingdom Shops</p>
-        <h1>Find Medievel Products here</h1>
+      {loading ? (
+        <Loader />
+      ) : (
+        <Fragment>
+          <MetaData title="kingdomShops" />
 
-        <a href="#container">
-          <button>
-            Scroll <CgMouse />
-          </button>
-        </a>
-      </div>
+          <div className="banner">
+            <p>Welcome to Kingdom Shops</p>
+            <h1>Find Medievel Products here</h1>
 
-      <h2 className="homeHeading">Featured Products</h2>
+            <a href="#container">
+              <button>
+                Scroll <CgMouse />
+              </button>
+            </a>
+          </div>
 
-      <div className="container" id="container">
-        <Product product={product} />
-        <Product product={product} />
-        <Product product={product} />
-        <Product product={product} />
+          <h2 className="homeHeading">Featured Products</h2>
 
-        <Product product={product} />
-        <Product product={product} />
-        <Product product={product} />
-        <Product product={product} />
-      </div>
+          <div className="container" id="container">
+            {products &&
+              products.map((product) => <Product product={product} />)}
+          </div>
+        </Fragment>
+      )}
     </Fragment>
   );
 };
